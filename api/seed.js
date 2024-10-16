@@ -1,34 +1,36 @@
-
+const fs = require('fs');
+const csv = require('csv-parser');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const alocacao = require("./dados/alocacao.json");
-const automoveis = require("./dados/automoveis.json");
-const clientes = require("./dados/clientes.json");
-const concessionarias = require("./dados/concessionarias.json");
-
 async function main() {
-    for (const alocacao of alocacao) {
+
+    fs.createReadStream('./dados/alocacao.csv')
+    .pipe(csv({ separator: ';' }))  // Adjust separator if your CSV uses semicolon
+    .on('data', (row) => {
+      users.push(row);
+    })
+    .on('end', async () => {
+      console.log('CSV file successfully processed');
+
+      // Insert users into the database
+      for (const alocacao of alocacaoData) {
         await prisma.alocacao.create({
-            data: alocacao
+          data: {
+            id: parseInt(alocacao.id), // Assuming this is an Int in your model
+            area: alocacao.area,       // As 'area' is a String in your model
+            automovel: alocacao.automovel, // 'automovel' is a String
+            concecionaria: alocacao.concessionaria, // This needs to match your model spelling
+            quantidade: parseInt(alocacao.quantidade), // 'quantidade' is an Int
+          },
         });
-    }
-    for (const automoveis of automoveis) {
-        await prisma.automoveis.create({
-            data: automoveis
-        });
-    }
-    for (const clientes of clientes) {
-        await prisma.clientes.create({
-            data: clientes
-        });
-    }
-    for (const concessionarias of concessionarias) {
-        await prisma.concessionarias.create({
-            data: concessionarias
-        });
-    }
+      }
+
+      console.log('Database seeding completed!');
+      await prisma.$disconnect();
+    });
 }
+
 
 main()
     .then(async () => {
