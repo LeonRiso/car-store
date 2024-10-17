@@ -20,7 +20,7 @@ model alocacao{
 model automoveis{
   id Int @id @default(autoincrement())
   modelo String @db.VarChar(255)
-  preco Int
+  preco Float
 }
 
 model clientes{
