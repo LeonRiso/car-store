@@ -80,14 +80,6 @@
     margin-top: 30px;
 }
 
-.patio11{
-    position:absolute;
-    border:2px solid black;
-    height:120px;
-    width: 80px;
-    margin-left:500px;
-}
-
 .patio8{
     position:absolute;
     border:2px solid black;
@@ -125,3 +117,5 @@
     margin-left:600px;
 
 }
+
+.filled { background-color: lightgreen; }
