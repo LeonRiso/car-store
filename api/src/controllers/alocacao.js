@@ -5,7 +5,7 @@ require('dotenv').config();
 const read = async (req, res) => {
     const alocacao = await prisma.alocacao.findMany({
         where: {
-            area: parseInt(req.params.id)
+            id: parseInt(req.params.id)
         }
     });
     return res.json(alocacao);

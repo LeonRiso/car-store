@@ -9,11 +9,45 @@ const storeData = [
 function openStoreModal(storeName, storeInfo) {
     Swal.fire({
         title: storeName,
-        text: storeInfo,
-        icon: 'info',
-        confirmButtonText: 'Close'
+        html: `
+            <div style="text-align: left; margin-top: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>Modelo: XYZ | Preço: R$ XXX.XXX,XX</span>
+                    <button onclick="handleSell()" class="sell-button">Vender</button>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+                    <span>Modelo: XYZ5 | Preço: R$ XXX.XXX,XX</span>
+                    <button onclick="handleSell()" class="sell-button">Vender</button>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+                    <span>Modelo: XYZ9 | Preço: R$ XXX.XXX,XX</span>
+                    <button onclick="handleSell()" class="sell-button">Vender</button>
+                </div>
+            </div>
+        `,
+        showConfirmButton: false,
+        showCloseButton: true,
+        customClass: {
+            popup: 'custom-swal-popup'
+        }
     });
 }
+
+function handleSell() {
+    Swal.fire({
+        title: 'Sell Confirmation',
+        text: 'Do you want to confirm this sale?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, sell it!',
+        cancelButtonText: 'No, cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('Sold!', 'The product has been sold.', 'success');
+        }
+    });
+}
+
 
 // Function to fetch store data (replace this with actual fetch from your database/API)
 async function getStoreData() {
