@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 // Map model names to Prisma models
 const modelMap = {
-  alocacao: prisma.alocacao,
+  alocacao: prisma.alocacao, // Make sure model names are lowercased
   automoveis: prisma.automoveis,
   clientes: prisma.clientes,
   concessionarias: prisma.concessionarias,
@@ -16,7 +16,7 @@ async function seedCSV(filePath, modelName, dataMapping) {
 
   return new Promise((resolve, reject) => {
     fs.createReadStream(filePath)
-      .pipe(csv({ separator: ';' }))
+      .pipe(csv({ separator: ';' })) // Adjust the separator according to your CSV file
       .on('data', (row) => {
         dataArray.push(row);
       })
@@ -51,37 +51,40 @@ async function seedCSV(filePath, modelName, dataMapping) {
 
 async function main() {
   try {
-    // Seed alocacao.csv
-    await seedCSV('./dados/alocacao.csv', 'alocacao', (row) => ({
-      id: parseInt(row.id),
-      area: row.area,
-      automovel: row.automovel,
-      concecionaria: row.concessionaria,
-      quantidade: parseInt(row.quantidade),
-    }));
-
-    // Seed automoveis.csv
+    // Seed automoveis.csv first to ensure foreign key references are available
     await seedCSV('./dados/automoveis.csv', 'automoveis', (row) => ({
-      id: parseInt(row.id),
+      id: parseInt(row.id), // Ensure you parse the ID
       modelo: row.modelo,
       preco: parseFloat(row.preco), // Parse floats for decimal values
     }));
 
-    // Seed clientes.csv
-    await seedCSV('./dados/clientes.csv', 'clientes', (row) => ({
-      id: parseInt(row.Id),
-      nome: row.Nome,
-    }));
-
-    // Seed concessionarias.csv
+    // Seed concessionarias.csv next
     await seedCSV('./dados/concessionarias.csv', 'concessionarias', (row) => ({
       id: parseInt(row.id),
       concessionaria: row.concessionaria,
     }));
 
+    // Seed clientes.csv
+    await seedCSV('./dados/clientes.csv', 'clientes', (row) => ({
+      id: parseInt(row.Id), // Ensure the casing matches your CSV
+      nome: row.Nome,
+    }));
+
+    // Seed alocacao.csv last to ensure foreign keys reference existing records
+    await seedCSV('./dados/alocacao.csv', 'alocacao', (row) => ({
+      area: row.area, // Assuming 'area' can be directly used as a string
+      automovel: {
+        connect: { id: parseInt(row.automovel) } // Connect to existing automovel by ID
+      },
+      concessionaria: {
+        connect: { id: parseInt(row.concessionaria) } // Connect to existing concessionaria by ID
+      },
+      quantidade: parseInt(row.quantidade),
+    }));
+
     console.log('All CSV files seeded successfully!');
   } catch (error) {
-    console.error('Error during seeding:', error);
+    console.error('Seeding failed:', error);
   } finally {
     await prisma.$disconnect();
   }

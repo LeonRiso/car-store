@@ -3,7 +3,11 @@ const prisma = new PrismaClient();
 require('dotenv').config();
 
 const read = async (req, res) => {
-    const concessionaria = await prisma.concessionarias.findMany();
+    const concessionaria = await prisma.concessionarias.findMany({
+      where: {
+          id: parseInt(req.params.id)
+      }
+  });
     return res.json(concessionaria);
 }
 

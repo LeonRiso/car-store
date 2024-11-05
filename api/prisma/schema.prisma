@@ -9,28 +9,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model alocacao{
-  id Int @id @default(autoincrement())
-  area String @db.VarChar(255)
-  automovel String @db.VarChar(255) @unique
-  concecionaria String @db.VarChar(255)
-  quantidade Int 
+model Alocacao {
+  id               Int              @id @default(autoincrement())
+  area             String           @db.VarChar(255)
+  quantidade       Int
+  automovelId      Int              // Foreign key to Automoveis
+  concessionariaId Int              // Foreign key to Concessionarias
+
+  automovel        Automoveis       @relation(fields: [automovelId], references: [id])
+  concessionaria   Concessionarias   @relation(fields: [concessionariaId], references: [id])
 }
 
-model automoveis{
-  id Int @id @default(autoincrement())
-  modelo String @db.VarChar(255)
-  preco Float
+model Automoveis {
+  id        Int         @id @default(autoincrement())
+  modelo    String      @db.VarChar(255)
+  preco     Float
+  alocacoes Alocacao[]  // Relation to Alocacao
+}
+
+model Concessionarias {
+  id          Int         @id @default(autoincrement())
+  concessionaria String   @db.VarChar(255)
+  alocacoes   Alocacao[]  // Relation to Alocacao
 }
 
 model clientes{
   id Int @id @default(autoincrement())
   nome String @db.VarChar(255)
- 
-}
-
-model concessionarias{
-  id Int @id @default(autoincrement())
-  concessionaria String @db.VarChar(255)
  
 }

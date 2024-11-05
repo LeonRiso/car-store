@@ -6,11 +6,15 @@ const automoveis = require('../controllers/automoveis')
 const clientes = require('../controllers/clientes')
 const concessionaria = require('../controllers/concessionaria')
 
-router.get('/', (req, res) => { return res.json("API Jaguar respondendo") });
-router.get('/automoveis/', automoveis.read);
-router.get('/clientes/', clientes.read);
+router.get('/', (req, res) => { return res.json("API respondendo") });
+router.get('/automoveis/:id', automoveis.read);
+router.get('/clientes/:id', clientes.read);
+router.get('/clientes/', clientes.readAll);
 router.get('/alocacao/:id', alocacao.read);
-router.get('/concessionaria/', concessionaria.read);
+router.get('/alocacao/area/:areaId', alocacao.readByArea);
+router.get('/alocacao/', alocacao.readAll);
+router.delete('/alocacao/:id', alocacao.del);
+router.get('/concessionaria/:id', concessionaria.read);
 
 
 module.exports = router;
